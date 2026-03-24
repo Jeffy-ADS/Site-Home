@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexHome — Casa Inteligente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #181818;
+    --accent: #c8a96e;
+    --accent-light: #e8c98e;
+    --text: #f0ede8;
+    --text-muted: #7a756e;
+    --text-dim: #3a3630;
+    --border: #1e1c19;
+    --radius: 2px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 4rem;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--text);
+  }
+
+  .logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-cta {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 0.65rem 1.8rem;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
+
+  .nav-cta:hover { background: var(--accent-light); }
+
+  /* ── HERO ── */
+  #inicio {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 0 4rem;
+    padding-top: 6rem;
+    gap: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 70% 50%, #1a1610 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(200,169,110,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,169,110,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .hero-left {
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 1s ease both;
+  }
+
+  .hero-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .hero-label::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 5vw, 5rem);
+    font-weight: 300;
+    line-height: 1.05;
+    margin-bottom: 1.8rem;
+    color: var(--text);
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    max-width: 440px;
+    margin-bottom: 2.5rem;
+    line-height: 1.8;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+  }
+
+  .btn-primary {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 1rem 2.5rem;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    transition: background 0.3s, transform 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); }
+
+  .btn-ghost {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 1rem 2rem;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.3s, color 0.3s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-right {
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 1s 0.2s ease both;
+  }
+
+  .house-visual {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    aspect-ratio: 1;
+    max-width: 520px;
+    margin-left: auto;
+  }
+
+  .house-visual::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 2rem; right: 2rem;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .room-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1rem;
+    height: 100%;
+  }
+
+  .room {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 1.2rem;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.3s;
+    overflow: hidden;
+  }
+
+  .room:hover { border-color: var(--accent); }
+
+  .room-name {
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+  }
+
+  .room-devices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .device-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .toggle {
+    width: 2rem;
+    height: 1rem;
+    border-radius: 20px;
+    background: var(--border);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .toggle.on { background: var(--accent); }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: #fff;
+    transition: left 0.3s;
+    left: 2px;
+  }
+
+  .toggle.on::after { left: calc(100% - 0.85rem); }
+
+  .room-icon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.2rem;
+    opacity: 0.25;
+  }
+
+  .status-bar {
+    margin-top: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    margin-right: 0.4rem;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    margin-top: 3rem;
+  }
+
+  .stat { }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+
+  /* ── SECTION SHARED ── */
+  section {
+    padding: 7rem 4rem;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 3.5vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  h2 em { font-style: italic; color: var(--accent); }
+
+  .section-sub {
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    max-width: 480px;
+    line-height: 1.8;
+    margin-bottom: 4rem;
+  }
+
+  /* ── SOLUÇÕES ── */
+  #solucoes { background: var(--surface); }
+
+  .solucoes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  .solucao-card {
+    background: var(--surface);
+    padding: 2.5rem;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .solucao-card:hover { background: var(--surface2); }
+
+  .solucao-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+
+  .solucao-card:hover::after { transform: scaleX(1); }
+
+  .sol-icon {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .sol-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    color: var(--text);
+  }
+
+  .sol-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  .sol-tag {
+    display: inline-block;
+    margin-top: 1.2rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--text-dim);
+    padding: 0.25rem 0.7rem;
+  }
+
+  /* ── DIFERENCIAIS ── */
+  #diferenciais {
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .diff-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: start;
+  }
+
+  .diff-left { position: sticky; top: 7rem; }
+
+  .diff-visual {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    position: relative;
+    margin-top: 2rem;
+  }
+
+  .diff-visual::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 2rem; right: 2rem;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .diff-screen {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    font-size: 0.75rem;
+    font-family: 'DM Sans', monospace;
+  }
+
+  .diff-screen-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .diff-screen-row:last-child { border-bottom: none; }
+
+  .diff-screen-row span:last-child { color: var(--accent); }
+
+  .diff-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .diff-item {
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 0;
+    cursor: pointer;
+  }
+
+  .diff-item:first-child { padding-top: 0; }
+
+  .diff-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+  }
+
+  .diff-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 0.6rem;
+    transition: color 0.3s;
+  }
+
+  .diff-item:hover .diff-title { color: var(--accent); }
+
+  .diff-body {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.75;
+    font-weight: 300;
+    max-width: 440px;
+  }
+
+  /* ── DEPOIMENTOS ── */
+  #depoimentos { background: var(--surface); }
+
+  .depo-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: end;
+    margin-bottom: 4rem;
+  }
+
+  .depo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .depo-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .depo-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+
+  .depo-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    color: var(--accent);
+    line-height: 0.5;
+    margin-bottom: 1rem;
+    opacity: 0.4;
+  }
+
+  .depo-text {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  .depo-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .depo-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+  }
+
+  .depo-name {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: 0.04em;
+  }
+
+  .depo-role {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  .stars { color: var(--accent); font-size: 0.7rem; margin-bottom: 0.8rem; }
+
+  /* ── CTA SECTION ── */
+  .cta-section {
+    background: var(--bg);
+    padding: 7rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 50% 60% at 50% 50%, #1a1610 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-section h2 {
+    max-width: 700px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .cta-section p {
+    color: var(--text-muted);
+    max-width: 480px;
+    margin: 0 auto 3rem;
+    font-size: 0.95rem;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    #inicio { grid-template-columns: 1fr; padding: 1.5rem; padding-top: 7rem; }
+    section { padding: 5rem 1.5rem; }
+    .solucoes-grid { grid-template-columns: 1fr; }
+    .diff-layout { grid-template-columns: 1fr; }
+    .diff-left { position: static; }
+    .depo-intro { grid-template-columns: 1fr; }
+    .depo-grid { grid-template-columns: 1fr; }
+    .cta-section { padding: 5rem 1.5rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+    .hero-stats { gap: 1.5rem; }
+    .house-visual { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Nex<span>Home</span></div>
+  <ul class="nav-links">
+    <li><a href="#inicio">Início</a></li>
+    <li><a href="#solucoes">Soluções</a></li>
+    <li><a href="#diferenciais">Diferenciais</a></li>
+    <li><a href="#depoimentos">Depoimentos</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('solucoes').scrollIntoView({behavior:'smooth'})">Conhecer Sistema</button>
+</nav>
+
+<!-- HERO -->
+<section id="inicio">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-left">
+    <div class="hero-label">Automação Residencial · IoT · Visualização 3D</div>
+    <h1>Sua casa,<br><em>inteligente</em><br>como você.</h1>
+    <p class="hero-desc">Controle iluminação, sensores, portões e eletrodomésticos em uma única plataforma. Monitoramento em tempo real com visualização tridimensional da sua residência.</p>
+    <div class="hero-actions">
+      <a href="#solucoes" class="btn-primary">Ver Soluções</a>
+      <a href="#diferenciais" class="btn-ghost">Saiba Mais</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">10+</div>
+        <div class="stat-label">Dispositivos integrados</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3D</div>
+        <div class="stat-label">Visualização imersiva</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">24h</div>
+        <div class="stat-label">Monitoramento em tempo real</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="house-visual">
+      <div class="room-grid">
+        <div class="room" onclick="toggleRoom(this)">
+          <div class="room-icon">🛋️</div>
+          <div class="room-name">Sala de Estar</div>
+          <div class="room-devices">
+            <div class="device-row">
+              <span>Iluminação</span>
+              <div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+            <div class="device-row">
+              <span>Ar-condicionado</span>
+              <div class="toggle" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+            <div class="device-row">
+              <span>Sensor de movimento</span>
+              <div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+        <div class="room" onclick="toggleRoom(this)">
+          <div class="room-icon">🍳</div>
+          <div class="room-name">Cozinha</div>
+          <div class="room-devices">
+            <div class="device-row">
+              <span>Iluminação</span>
+              <div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+            <div class="device-row">
+              <span>Sensor de fumaça</span>
+              <div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+            <div class="device-row">
+              <span>Exaustor</span>
+              <div class="toggle" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+        <div class="room" onclick="toggleRoom(this)">
+          <div class="room-icon">🛏️</div>
+          <div class="room-name">Quarto</div>
+          <div class="room-devices">
+            <div class="device-row">
+              <span>Iluminação</span>
+              <div class="toggle" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+            <div class="device-row">
+              <span>Climatizador</span>
+              <div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+            <div class="device-row">
+              <span>Cortinas</span>
+              <div class="toggle" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+        <div class="room" onclick="toggleRoom(this)">
+          <div class="room-icon">🚗</div>
+          <div class="room-name">Garagem</div>
+          <div class="room-devices">
+            <div class="device-row">
+              <span>Portão</span>
+              <div class="toggle" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+            <div class="device-row">
+              <span>Câmera</span>
+              <div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+            <div class="device-row">
+              <span>Sensor térmico</span>
+              <div class="toggle on" onclick="event.stopPropagation();this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="status-bar">
+        <span><span class="status-dot"></span>Sistema Online</span>
+        <span>8 dispositivos ativos</span>
+        <span>Temperatura: 23°C</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUÇÕES -->
+<section id="solucoes">
+  <div class="section-label">O que oferecemos</div>
+  <h2>Tudo que sua casa<br><em>precisa</em>, integrado.</h2>
+  <p class="section-sub">Uma plataforma centralizada para gerenciar todos os dispositivos inteligentes da sua residência de forma simples, segura e eficiente.</p>
+
+  <div class="solucoes-grid reveal">
+    <div class="solucao-card">
+      <span class="sol-icon">💡</span>
+      <div class="sol-title">Iluminação Inteligente</div>
+      <p class="sol-desc">Controle e automatize toda a iluminação da casa. Crie cenas personalizadas, programe horários e ajuste a intensidade de qualquer ambiente remotamente.</p>
+      <span class="sol-tag">Automação</span>
+    </div>
+    <div class="solucao-card">
+      <span class="sol-icon">🔒</span>
+      <div class="sol-title">Segurança e Acesso</div>
+      <p class="sol-desc">Câmeras, fechaduras digitais, sensores de proximidade e alertas em tempo real. Monitoramento 24 horas com notificações instantâneas no seu celular.</p>
+      <span class="sol-tag">Segurança</span>
+    </div>
+    <div class="solucao-card">
+      <span class="sol-icon">🌡️</span>
+      <div class="sol-title">Sensores Ambientais</div>
+      <p class="sol-desc">Sensores de temperatura, fumaça, movimento e umidade integrados ao sistema. Alertas automáticos para manter sua família sempre protegida.</p>
+      <span class="sol-tag">Monitoramento</span>
+    </div>
+    <div class="solucao-card">
+      <span class="sol-icon">🔌</span>
+      <div class="sol-title">Eletrodomésticos Conectados</div>
+      <p class="sol-desc">Integre portões, cortinas automáticas, exaustores, climatizadores e muito mais em uma única interface. Controle tudo com um toque.</p>
+      <span class="sol-tag">Integração</span>
+    </div>
+    <div class="solucao-card">
+      <span class="sol-icon">⚡</span>
+      <div class="sol-title">Automação de Rotinas</div>
+      <p class="sol-desc">Crie rotinas automáticas personalizadas: acorde com as luzes acendendo gradualmente, chegue em casa com o ambiente já climatizado.</p>
+      <span class="sol-tag">Rotinas</span>
+    </div>
+    <div class="solucao-card">
+      <span class="sol-icon">🏠</span>
+      <div class="sol-title">Visualização 3D</div>
+      <p class="sol-desc">Diferencial exclusivo: visualize e controle sua casa em ambiente tridimensional interativo. Veja em tempo real o status de cada cômodo.</p>
+      <span class="sol-tag">Exclusivo</span>
+    </div>
+  </div>
+</section>
+
+<!-- DIFERENCIAIS -->
+<section id="diferenciais">
+  <div class="diff-layout">
+    <div class="diff-left reveal">
+      <div class="section-label">Por que NexHome</div>
+      <h2>O que nos torna<br><em>diferentes</em>.</h2>
+      <p class="section-sub">Combinamos tecnologias modernas para entregar uma experiência de automação residencial verdadeiramente única no mercado.</p>
+
+      <div class="diff-visual">
+        <div class="diff-screen">
+          <div class="diff-screen-row">
+            <span>Dashboard</span>
+            <span>Ativo ✓</span>
+          </div>
+          <div class="diff-screen-row">
+            <span>Visualização 3D</span>
+            <span>Online ✓</span>
+          </div>
+          <div class="diff-screen-row">
+            <span>Sensores</span>
+            <span>12 conectados</span>
+          </div>
+          <div class="diff-screen-row">
+            <span>Automações</span>
+            <span>5 ativas</span>
+          </div>
+          <div class="diff-screen-row">
+            <span>Notificações</span>
+            <span>Tempo real</span>
+          </div>
+          <div class="diff-screen-row">
+            <span>Segurança</span>
+            <span>Autenticada ✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="diff-list reveal">
+      <div class="diff-item">
+        <div class="diff-num">01</div>
+        <div class="diff-title">Plataforma Centralizada</div>
+        <p class="diff-body">Chega de um aplicativo para cada dispositivo. No NexHome, você gerencia toda a sua casa em uma única tela, intuitiva e responsiva — funciona no computador, tablet e celular.</p>
+      </div>
+      <div class="diff-item">
+        <div class="diff-num">02</div>
+        <div class="diff-title">Visualização 3D Exclusiva</div>
+        <p class="diff-body">Tecnologia única no mercado: navegue por uma réplica tridimensional da sua residência. Clique em qualquer cômodo para controlar os dispositivos de forma visual e intuitiva.</p>
+      </div>
+      <div class="diff-item">
+        <div class="diff-num">03</div>
+        <div class="diff-title">Monitoramento em Tempo Real</div>
+        <p class="diff-body">Acompanhe o status de todos os dispositivos, receba alertas de sensores ativados e visualize o consumo energético — tudo atualizado instantaneamente.</p>
+      </div>
+      <div class="diff-item">
+        <div class="diff-num">04</div>
+        <div class="diff-title">Segurança Robusta</div>
+        <p class="diff-body">Autenticação segura com controle de níveis de acesso. Administradores e usuários comuns com permissões distintas para máxima proteção da sua privacidade.</p>
+      </div>
+      <div class="diff-item">
+        <div class="diff-num">05</div>
+        <div class="diff-title">Escalável e Extensível</div>
+        <p class="diff-body">Sua casa cresce com você. O sistema foi projetado para receber novos dispositivos e funcionalidades sem complicação — basta cadastrar e já está integrado.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section id="depoimentos">
+  <div class="depo-intro">
+    <div class="reveal">
+      <div class="section-label">O que dizem</div>
+      <h2>Quem já vive<br>no <em>futuro</em>.</h2>
+    </div>
+    <p class="section-sub reveal" style="margin-bottom:0">Nossos clientes transformaram suas residências e não imaginam mais viver sem o NexHome.</p>
+  </div>
+
+  <div class="depo-grid reveal">
+    <div class="depo-card">
+      <div class="depo-quote">"</div>
+      <div class="stars">★★★★★</div>
+      <p class="depo-text">A visualização 3D mudou completamente como interajo com minha casa. É como ter um painel de controle futurista — impressionante e muito fácil de usar.</p>
+      <div class="depo-author">
+        <div class="depo-avatar">👨</div>
+        <div>
+          <div class="depo-name">Carlos Mendes</div>
+          <div class="depo-role">Engenheiro · Brasília, DF</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="depo-card">
+      <div class="depo-quote">"</div>
+      <div class="stars">★★★★★</div>
+      <p class="depo-text">Antes tinha três aplicativos diferentes para cuidar da casa. Agora tenho tudo em um lugar só. Os alertas dos sensores me deram muito mais tranquilidade.</p>
+      <div class="depo-author">
+        <div class="depo-avatar">👩</div>
+        <div>
+          <div class="depo-name">Ana Ferreira</div>
+          <div class="depo-role">Arquiteta · Goiânia, GO</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="depo-card">
+      <div class="depo-quote">"</div>
+      <div class="stars">★★★★★</div>
+      <p class="depo-text">As rotinas automáticas são incríveis. A casa já sabe que chego às 18h e tudo está ajustado — luzes, temperatura, portão. Tecnologia do jeito que deveria ser.</p>
+      <div class="depo-author">
+        <div class="depo-avatar">👨‍💼</div>
+        <div>
+          <div class="depo-name">Roberto Alves</div>
+          <div class="depo-role">Empresário · São Paulo, SP</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<div class="cta-section">
+  <div class="section-label" style="justify-content:center;margin-bottom:1.5rem">Pronto para começar</div>
+  <h2 class="reveal">Transforme sua casa em um lar <em>inteligente</em>.</h2>
+  <p class="reveal">Conforto, segurança e eficiência ao alcance de um toque. Descubra como o NexHome pode revolucionar sua forma de viver.</p>
+  <a href="#solucoes" class="btn-primary reveal">Começar Agora</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo" style="font-size:1.2rem">Nex<span style="color:var(--accent)">Home</span></div>
+  <span>© 2026 NexHome · Smart Home System · Brasília, DF</span>
+  <span style="color:var(--text-dim)">IoT · Automação · Visualização 3D</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Stagger children of grids
+  document.querySelectorAll('.solucoes-grid, .depo-grid').forEach(grid => {
+    [...grid.children].forEach((child, i) => {
+      child.classList.add('reveal');
+      child.style.transitionDelay = `${i * 0.08}s`;
+      observer.observe(child);
+    });
+  });
+
+  // Room toggle
+  function toggleRoom(el) {
+    el.style.borderColor = 'var(--accent)';
+    setTimeout(() => el.style.borderColor = '', 600);
+  }
+
+  // Nav active state
+  const sections = document.querySelectorAll('section[id], .cta-section');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id || '';
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
+    });
+  });
+</script>
+</body>
+</html>
