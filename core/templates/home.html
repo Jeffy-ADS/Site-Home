@@ -395,9 +395,10 @@
     <li><a href="#inicio">Início</a></li>
     <li><a href="#solucoes">Soluções</a></li>
     <li><a href="#diferenciais">Diferenciais</a></li>
-    <li><a href="#depoimentos">Depoimentos</a></li>
   </ul>
-  <button class="nav-cta" onclick="document.getElementById('solucoes').scrollIntoView({behavior:'smooth'})">Ver Sistema</button>
+  <div class="nav-cta">
+    <a href="{% url 'dashboard' %}" class="btn-primary" role="button" aria-label="Ver sistema">Ver Sistema</a>
+  </div>
 </nav>
 
 <section id="inicio">
