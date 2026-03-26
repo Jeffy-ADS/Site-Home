@@ -26,3 +26,11 @@ def signup_view(request):
 @login_required
 def dashboard_view(request):
     return render(request, 'dashboard.html')
+
+
+def custom_404_view(request, exception):
+    return render(request, '404.html', status=404)
+
+
+def preview_404_view(request):
+    return render(request, '404.html', status=404)
