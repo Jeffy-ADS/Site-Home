@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexHome — Painel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════
+       TOKENS & THEME
+    ═══════════════════════════════════════ */
+    :root {
+      --brand:    #29ffc9;
+      --brand-d:  #00d4a0;
+      --brand-2:  #c5fec6;
+      --brand-bg: #e5fef6;
+      --ink:      #1a1220;
+      --ink-2:    #4a3d46;
+      --ink-3:    #8a7a86;
+      --ink-4:    #b8acb4;
+      --surface:  #ffffff;
+      --surface-2:#f5fef9;
+      --surface-3:#edfdf5;
+      --border:   rgba(41,255,201,0.18);
+      --border-2: rgba(26,18,32,0.08);
+      --shadow-sm:0 2px 8px rgba(26,18,32,0.06);
+      --shadow-md:0 8px 32px rgba(26,18,32,0.10);
+      --shadow-lg:0 20px 60px rgba(26,18,32,0.13);
+      --r-sm: 10px;
+      --r-md: 16px;
+      --r-lg: 22px;
+      --r-xl: 28px;
+    }
+    [data-theme="dark"] {
+      --brand:    #29ffc9;
+      --brand-d:  #00d4a0;
+      --brand-2:  #0a4a3a;
+      --brand-bg: #0d2420;
+      --ink:      #e8fdf5;
+      --ink-2:    #a8c4bc;
+      --ink-3:    #6a8a82;
+      --ink-4:    #3a5a52;
+      --surface:  #111c19;
+      --surface-2:#0d1814;
+      --surface-3:#162820;
+      --border:   rgba(41,255,201,0.14);
+      --border-2: rgba(255,255,255,0.06);
+      --shadow-sm:0 2px 8px rgba(0,0,0,0.25);
+      --shadow-md:0 8px 32px rgba(0,0,0,0.35);
+      --shadow-lg:0 20px 60px rgba(0,0,0,0.45);
+    }
+
+    /* ═══════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface-2);
+      color: var(--ink);
+      min-height: 100vh;
+      transition: background 0.4s, color 0.4s;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      vertical-align: middle;
+      user-select: none;
+    }
+    .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    input, select { font-family: inherit; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ═══════════════════════════════════════
+       BACKGROUND DECORATION
+    ═══════════════════════════════════════ */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 80% -10%, rgba(41,255,201,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at -10% 60%, rgba(41,255,201,0.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 0.4s;
+    }
+    [data-theme="dark"] body::before {
+      background:
+        radial-gradient(ellipse 70% 50% at 80% -10%, rgba(41,255,201,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at -10% 60%, rgba(41,255,201,0.04) 0%, transparent 60%);
+    }
+
+    /* ═══════════════════════════════════════
+       LOADING
+    ═══════════════════════════════════════ */
+    #loader {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--ink);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    #loader.out { opacity: 0; pointer-events: none; }
+    .loader-inner {
+      display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+    }
+    .loader-logo {
+      font-size: 2rem; font-weight: 700; color: var(--surface);
+      letter-spacing: -0.02em;
+    }
+    .loader-logo em { color: var(--brand); font-style: normal; }
+    .loader-track {
+      width: 200px; height: 2px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px; overflow: hidden;
+    }
+    .loader-bar {
+      height: 100%; width: 0;
+      background: linear-gradient(90deg, var(--brand-d), var(--brand));
+      border-radius: 2px;
+      animation: loadBar 0.9s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes loadBar { to { width: 100%; } }
+    .loader-label {
+      font-size: 0.72rem; color: rgba(255,255,255,0.35);
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .loader-dots span {
+      display: inline-block; width: 5px; height: 5px;
+      border-radius: 50%; background: var(--brand); margin: 0 3px;
+      animation: dotBounce 0.9s ease infinite;
+    }
+    .loader-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .loader-dots span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes dotBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+    /* ═══════════════════════════════════════
+       LAYOUT
+    ═══════════════════════════════════════ */
+    #app {
+      position: relative; z-index: 1;
+      max-width: 700px; margin: 0 auto;
+      padding: 1.25rem 1rem 6rem;
+    }
+    .fade-in {
+      opacity: 0; transform: translateY(12px);
+      animation: fadeUp 0.5s ease forwards;
+    }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* ═══════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════ */
+    .header-card {
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      border-radius: var(--r-xl);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-md);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      animation: fadeUp 0.4s ease forwards;
+    }
+    .header-logo {
+      font-size: 1.6rem; font-weight: 700;
+      color: var(--ink); letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .header-logo em { color: var(--brand-d); font-style: normal; }
+    .header-sub {
+      font-size: 0.72rem; color: var(--ink-3);
+      margin-top: 0.3rem; letter-spacing: 0.01em;
+    }
+    .header-online {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-size: 0.65rem; font-weight: 600; color: var(--brand-d);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 0.35rem;
+    }
+    .pulse-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--brand-d);
+      box-shadow: 0 0 0 0 rgba(41,255,201,0.5);
+      animation: pulseDot 2s infinite;
+    }
+    @keyframes pulseDot {
+      0%  { box-shadow: 0 0 0 0 rgba(41,255,201,0.5); }
+      70% { box-shadow: 0 0 0 6px rgba(41,255,201,0); }
+      100%{ box-shadow: 0 0 0 0 rgba(41,255,201,0); }
+    }
+    .night-badge {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--ink); color: var(--brand);
+      padding: 0.2rem 0.6rem; border-radius: 100px;
+      margin-top: 0.3rem;
+    }
+    [data-theme="dark"] .night-badge { background: var(--brand-2); color: var(--brand); }
+
+    /* STATS ROW */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem;
+    }
+    .stat-chip {
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 0.7rem 0.5rem;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .stat-chip.clickable { cursor: pointer; }
+    .stat-chip.clickable:hover {
+      border-color: var(--brand);
+      background: var(--brand-bg);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(41,255,201,0.15);
+    }
+    .stat-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.3rem; font-weight: 500;
+      color: var(--ink); line-height: 1;
+    }
+    .stat-lbl { font-size: 0.65rem; color: var(--ink-3); margin-top: 0.25rem; }
+
+    /* HEADER ACTIONS */
+    .header-actions { display: flex; gap: 0.5rem; align-items: center; }
+    .icon-btn {
+      width: 2.2rem; height: 2.2rem;
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface-3);
+      border: 1px solid var(--border-2);
+      color: var(--ink-3);
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+    .icon-btn:hover {
+      background: var(--brand-bg);
+      border-color: var(--brand);
+      color: var(--brand-d);
+      transform: scale(1.05);
+    }
+    .icon-btn .material-symbols-outlined { font-size: 1.1rem !important; }
+
+    /* ═══════════════════════════════════════
+       SECTION LABEL
+    ═══════════════════════════════════════ */
+    .section-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--ink-3);
+      padding: 0 0.25rem; margin-bottom: 0.65rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .section-label span { font-weight: 400; font-size: 0.62rem; color: var(--ink-4); }
+
+    /* ═══════════════════════════════════════
+       QUICK ACTIONS
+    ═══════════════════════════════════════ */
+    #quick-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .quick-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border-2);
+      border-radius: var(--r-lg);
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(.34,1.2,.64,1);
+      box-shadow: var(--shadow-sm);
+      position: relative; overflow: hidden;
+    }
+    .quick-card::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 70% 30%, rgba(41,255,201,0.15), transparent 60%);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .quick-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .quick-card:hover::after { opacity: 1; }
+    .quick-card:active { transform: scale(0.97); }
+    .quick-card.is-on {
+      background: var(--brand-bg);
+      border-color: var(--brand);
+      box-shadow: 0 4px 20px rgba(41,255,201,0.2);
+    }
+    .quick-card.is-on::after { opacity: 1; }
+    .q-icon {
+      width: 2.2rem; height: 2.2rem;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface-3);
+      margin-bottom: 0.6rem;
+      transition: all 0.25s;
+    }
+    .quick-card.is-on .q-icon {
+      background: linear-gradient(135deg, #c5fec6, var(--brand));
+      box-shadow: 0 2px 10px rgba(41,255,201,0.35);
+    }
+    .q-icon .material-symbols-outlined { font-size: 1.1rem !important; }
+    .q-loc { font-size: 0.65rem; color: var(--ink-3); margin-bottom: 0.1rem; }
+    .q-name { font-size: 0.82rem; font-weight: 600; color: var(--ink); }
+    .q-state {
+      font-size: 0.7rem; font-weight: 500; color: var(--ink-4);
+      margin-top: 0.35rem;
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+    .q-state.on { color: var(--brand-d); }
+    .q-state-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: currentColor; flex-shrink: 0;
+    }
+    /* quick toggle in corner */
+    .q-toggle {
+      position: absolute; top: 0.75rem; right: 0.75rem;
+    }
+
+    /* ═══════════════════════════════════════
+       ENERGY BAR (nova seção)
+    ═══════════════════════════════════════ */
+    .energy-card {
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      border-radius: var(--r-lg);
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .energy-row { display: flex; flex-direction: column; gap: 0.55rem; }
+    .energy-item { }
+    .energy-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 0.3rem;
+    }
+    .energy-name { font-size: 0.75rem; font-weight: 500; color: var(--ink-2); }
+    .energy-val {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem; color: var(--ink-3);
+    }
+    .energy-track {
+      height: 4px; border-radius: 100px;
+      background: var(--surface-3);
+      overflow: hidden;
+    }
+    .energy-fill {
+      height: 100%; border-radius: 100px;
+      transition: width 0.6s cubic-bezier(.4,0,.2,1);
+      background: linear-gradient(90deg, var(--brand-d), var(--brand));
+    }
+    .energy-fill.warm { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .energy-fill.cool { background: linear-gradient(90deg, #60a5fa, #93c5fd); }
+
+    /* ═══════════════════════════════════════
+       ACCORDION
+    ═══════════════════════════════════════ */
+    .acc-card {
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .acc-card + .acc-card { margin-top: 0.75rem; }
+    .acc-trigger {
+      width: 100%;
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      background: none; border: none;
+      cursor: pointer; text-align: left;
+      transition: background 0.2s;
+    }
+    .acc-trigger:hover { background: var(--surface-3); }
+    .acc-trigger:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
+    .acc-icon-wrap {
+      width: 2rem; height: 2rem; border-radius: 9px;
+      background: var(--surface-3);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.25s;
+    }
+    .acc-card.open .acc-icon-wrap {
+      background: var(--brand-bg);
+      box-shadow: 0 0 0 1px var(--brand);
+    }
+    .acc-icon-wrap .material-symbols-outlined { font-size: 1rem !important; }
+    .acc-title { font-weight: 600; font-size: 0.88rem; color: var(--ink); flex: 1; }
+    .acc-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem; font-weight: 500;
+      padding: 0.15rem 0.5rem; border-radius: 100px;
+      background: var(--surface-3); color: var(--ink-3);
+      border: 1px solid var(--border-2);
+      transition: all 0.2s;
+    }
+    .acc-card.open .acc-badge {
+      background: var(--brand-bg); color: var(--brand-d);
+      border-color: var(--brand);
+    }
+    .acc-chev {
+      color: var(--ink-4);
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+      font-size: 1.1rem !important;
+    }
+    .acc-card.open .acc-chev { transform: rotate(180deg); }
+
+    .acc-body {
+      display: none;
+      padding: 0 1rem 1rem;
+    }
+    .acc-body.open { display: block; animation: slideDown 0.28s ease; }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════
+       ROOM GROUP
+    ═══════════════════════════════════════ */
+    .room-group { margin-bottom: 0.75rem; }
+    .room-group:last-child { margin-bottom: 0; }
+    .room-label {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--ink-4);
+      padding: 0.4rem 0.4rem 0.4rem 0;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .room-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--border-2);
+    }
+    .devices-list { display: flex; flex-direction: column; gap: 0.45rem; }
+
+    /* ═══════════════════════════════════════
+       DEVICE ROW
+    ═══════════════════════════════════════ */
+    .device-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: var(--r-sm);
+      border: 1.5px solid transparent;
+      background: var(--surface-2);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .device-row:hover {
+      background: var(--surface);
+      border-color: var(--border);
+      transform: translateX(2px);
+      box-shadow: var(--shadow-sm);
+    }
+    .device-row:focus-visible { outline: 2px solid var(--brand); }
+    .device-row:active { transform: scale(0.99); }
+    .device-row.is-on {
+      background: var(--brand-bg);
+      border-color: var(--brand);
+    }
+    .dev-icon {
+      width: 1.9rem; height: 1.9rem;
+      border-radius: 8px;
+      background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.25s;
+      border: 1px solid var(--border-2);
+    }
+    .device-row.is-on .dev-icon {
+      background: linear-gradient(135deg, #c5fec6, var(--brand));
+      border-color: transparent;
+      box-shadow: 0 2px 8px rgba(41,255,201,0.3);
+    }
+    .dev-icon .material-symbols-outlined { font-size: 1rem !important; }
+    .dev-info { flex: 1; min-width: 0; }
+    .dev-name { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
+    .dev-status { font-size: 0.67rem; color: var(--ink-4); margin-top: 0.05rem; transition: color 0.2s; }
+    .device-row.is-on .dev-status { color: var(--brand-d); font-weight: 500; }
+
+    /* ═══════════════════════════════════════
+       TOGGLE
+    ═══════════════════════════════════════ */
+    .tgl { position: relative; width: 2.5rem; height: 1.35rem; flex-shrink: 0; }
+    .tgl input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .tgl-track {
+      position: absolute; inset: 0; border-radius: 100px;
+      background: var(--border-2);
+      cursor: pointer; transition: background 0.28s;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .tgl-track::after {
+      content: ''; position: absolute;
+      top: 2px; left: 2px;
+      width: 1rem; height: 1rem;
+      border-radius: 50%; background: white;
+      transition: left 0.25s cubic-bezier(.34,1.3,.64,1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    input:checked + .tgl-track { background: var(--brand); border-color: transparent; }
+    input:checked + .tgl-track::after { left: calc(100% - 1.15rem); }
+    [data-theme="dark"] .tgl-track { background: rgba(255,255,255,0.1); }
+    [data-theme="dark"] input:checked + .tgl-track { background: var(--brand); }
+
+    /* ═══════════════════════════════════════
+       BULK BUTTONS
+    ═══════════════════════════════════════ */
+    .bulk-row {
+      display: flex; gap: 0.5rem; margin-bottom: 1rem;
+    }
+    .bulk-btn {
+      flex: 1; padding: 0.55rem 0.5rem;
+      border-radius: var(--r-sm);
+      font-size: 0.75rem; font-weight: 600;
+      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+    }
+    .bulk-btn.on {
+      background: var(--brand-bg);
+      border: 1.5px solid var(--brand);
+      color: var(--brand-d);
+    }
+    .bulk-btn.on:hover { background: rgba(41,255,201,0.25); }
+    .bulk-btn.off {
+      background: var(--surface-3);
+      border: 1.5px solid var(--border-2);
+      color: var(--ink-3);
+    }
+    .bulk-btn.off:hover { background: var(--surface); }
+    .bulk-btn .material-symbols-outlined { font-size: 0.9rem !important; }
+
+    /* ═══════════════════════════════════════
+       NIGHT MODAL
+    ═══════════════════════════════════════ */
+    #night-modal {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      align-items: flex-end; justify-content: center;
+      padding: 0;
+    }
+    @media (min-width: 500px) {
+      #night-modal { align-items: center; padding: 1rem; }
+    }
+    #night-modal.open { display: flex; }
+    .modal-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+    }
+    .modal-sheet {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 520px;
+      max-height: 92vh; overflow-y: auto;
+      background: var(--surface);
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-lg);
+      animation: sheetUp 0.32s cubic-bezier(.34,1.1,.64,1);
+    }
+    @media (min-width: 500px) {
+      .modal-sheet { border-radius: var(--r-xl); animation: modalIn 0.3s cubic-bezier(.34,1.1,.64,1); }
+    }
+    @keyframes sheetUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes modalIn {
+      from { transform: scale(0.96) translateY(10px); opacity: 0; }
+      to   { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .modal-sheet::-webkit-scrollbar { width: 3px; }
+    .modal-sheet::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .modal-handle {
+      width: 36px; height: 4px; border-radius: 2px;
+      background: var(--border-2); margin: -0.5rem auto 1.25rem;
+    }
+    @media (min-width: 500px) { .modal-handle { display: none; } }
+    .modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; }
+    .modal-title { font-size: 1.05rem; font-weight: 700; color: var(--ink); }
+    .modal-sub { font-size: 0.72rem; color: var(--ink-3); margin-top: 0.2rem; }
+    .modal-close {
+      width: 2rem; height: 2rem; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface-3); color: var(--ink-3);
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .modal-close:hover { background: var(--surface-2); color: var(--ink); }
+    .modal-close .material-symbols-outlined { font-size: 1rem !important; }
+
+    /* Enable toggle row */
+    .enable-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.85rem 1rem; border-radius: var(--r-md);
+      background: var(--brand-bg);
+      border: 1.5px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    .enable-label { font-size: 0.85rem; font-weight: 600; color: var(--ink); }
+    .enable-sub { font-size: 0.7rem; color: var(--ink-3); margin-top: 0.1rem; }
+
+    /* form */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+    .form-field label {
+      display: block; font-size: 0.67rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink-3); margin-bottom: 0.4rem;
+    }
+    .form-control {
+      width: 100%; padding: 0.55rem 0.8rem;
+      border-radius: var(--r-sm);
+      border: 1.5px solid var(--border-2);
+      background: var(--surface-3); color: var(--ink);
+      font-size: 0.82rem; outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+    }
+    .form-control:focus { border-color: var(--brand); background: var(--brand-bg); }
+    [data-theme="dark"] .form-control { background: var(--surface-2); }
+
+    /* night device list */
+    .night-dev-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.55rem 0.65rem;
+      border-radius: var(--r-sm);
+      cursor: pointer; transition: background 0.15s;
+    }
+    .night-dev-row:hover { background: var(--surface-3); }
+    .night-dev-row input[type=checkbox] {
+      width: 1rem; height: 1rem;
+      accent-color: var(--brand-d);
+      cursor: pointer;
+    }
+    .night-dev-name { font-size: 0.8rem; font-weight: 500; color: var(--ink); }
+    .night-dev-loc { font-size: 0.65rem; color: var(--ink-3); }
+    .night-zone-tag {
+      margin-left: auto; font-size: 0.6rem;
+      padding: 0.1rem 0.45rem; border-radius: 100px;
+      background: var(--surface-3); color: var(--ink-3);
+      border: 1px solid var(--border-2);
+    }
+
+    /* summary */
+    .night-summary {
+      padding: 0.75rem 1rem; border-radius: var(--r-md);
+      background: var(--surface-3); border: 1px solid var(--border);
+      font-size: 0.78rem; color: var(--ink-2);
+      line-height: 1.55; margin: 0.75rem 0;
+    }
+
+    /* modal actions */
+    .modal-actions { display: flex; gap: 0.6rem; margin-top: 0.25rem; }
+    .btn-cancel {
+      flex: 1; padding: 0.7rem;
+      border-radius: var(--r-sm); font-size: 0.82rem; font-weight: 600;
+      border: 1.5px solid var(--border-2); color: var(--ink-3);
+      transition: all 0.2s;
+    }
+    .btn-cancel:hover { background: var(--surface-3); }
+    .btn-save {
+      flex: 1.5; padding: 0.7rem;
+      border-radius: var(--r-sm); font-size: 0.82rem; font-weight: 700;
+      background: var(--brand); color: var(--ink);
+      box-shadow: 0 4px 16px rgba(41,255,201,0.3);
+      transition: all 0.2s;
+    }
+    .btn-save:hover { background: var(--brand-d); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(41,255,201,0.4); }
+    .btn-save:active { transform: scale(0.98); }
+
+    /* ═══════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════ */
+    #toast-container {
+      position: fixed; bottom: 1.25rem; left: 50%;
+      transform: translateX(-50%);
+      z-index: 9000;
+      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+      pointer-events: none;
+    }
+    .toast {
+      background: var(--ink);
+      color: var(--surface);
+      padding: 0.55rem 1rem;
+      border-radius: 100px;
+      font-size: 0.76rem; font-weight: 500;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      border: 1px solid rgba(41,255,201,0.2);
+      animation: toastIn 0.3s cubic-bezier(.34,1.3,.64,1) both;
+      white-space: nowrap;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .toast-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--brand); flex-shrink: 0; }
+    @keyframes toastIn { from{opacity:0;transform:translateY(8px) scale(0.92)} to{opacity:1;transform:translateY(0) scale(1)} }
+
+    /* ═══════════════════════════════════════
+       SELECT TAGS (modal)
+    ═══════════════════════════════════════ */
+    .modal-devs-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .modal-devs-label {
+      font-size: 0.67rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--ink-3);
+    }
+    .tag-btns { display: flex; gap: 0.4rem; }
+    .tag-btn {
+      font-size: 0.67rem; font-weight: 600;
+      padding: 0.2rem 0.6rem; border-radius: 100px;
+      transition: all 0.15s;
+    }
+    .tag-btn.all { background: var(--brand-bg); color: var(--brand-d); border: 1px solid var(--brand); }
+    .tag-btn.none { background: var(--surface-3); color: var(--ink-3); border: 1px solid var(--border-2); }
+    .tag-btn:hover { filter: brightness(0.95); }
+
+    /* ═══════════════════════════════════════
+       KEYBOARD SHORTCUT HINT
+    ═══════════════════════════════════════ */
+    .kbd {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      background: var(--surface-3);
+      border: 1px solid var(--border-2);
+      padding: 0.05rem 0.3rem;
+      border-radius: 4px;
+      color: var(--ink-4);
+    }
+
+    /* ═══════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════ */
+    @media (max-width: 420px) {
+      #quick-grid { grid-template-columns: 1fr 1fr; }
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ═══════════════════════════════════════
+       SCROLL BAR
+    ═══════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- ══════ LOADER ══════ -->
+<div id="loader">
+  <div class="loader-inner">
+    <div class="loader-logo">Nex<em>Home</em></div>
+    <div class="loader-dots">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="loader-track"><div class="loader-bar"></div></div>
+    <p class="loader-label">Carregando sistemas</p>
+  </div>
+</div>
+
+<!-- ══════ APP ══════ -->
+<div id="app" style="opacity:0">
+
+  <!-- HEADER -->
+  <header class="header-card" style="animation-delay:0.05s">
+    <div>
+      <div class="header-online"><span class="pulse-dot"></span> Sistema Online</div>
+      <h1 class="header-logo">Nex<em>Home</em></h1>
+      <p class="header-sub">Controle inteligente em tempo real</p>
+      <div id="night-indicator" class="hidden" style="margin-top:0.3rem">
+        <span class="night-badge">
+          <span class="material-symbols-outlined" style="font-size:0.7rem!important">nights_stay</span>
+          Rotina noturna ativa
+        </span>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.6rem">
+      <div class="header-actions">
+        <button class="icon-btn" onclick="toggleTheme()" title="Alternar tema (T)" aria-label="Alternar entre modo claro e escuro">
+          <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
+        </button>
+        <button class="icon-btn" onclick="openNightModal()" title="Rotina noturna (N)" aria-label="Configurar rotina noturna">
+          <span class="material-symbols-outlined">nights_stay</span>
+        </button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-chip">
+          <div class="stat-num" id="stat-on">0</div>
+          <div class="stat-lbl">Ligados</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-num" id="stat-total">8</div>
+          <div class="stat-lbl">Total</div>
+        </div>
+        <div class="stat-chip clickable" onclick="openNightModal()" title="Rotina noturna">
+          <div class="stat-num" id="night-stat">🌙</div>
+          <div class="stat-lbl">Rotina</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- QUICK ACTIONS -->
+  <div class="section-label fade-in" style="animation-delay:0.1s">
+    Ações Rápidas <span>Mais usados</span>
+  </div>
+  <div id="quick-grid" class="fade-in" style="animation-delay:0.15s"></div>
+
+  <!-- ENERGY -->
+  <div class="section-label fade-in" style="animation-delay:0.18s">
+    Consumo Estimado <span id="energy-label">— W ativos</span>
+  </div>
+  <div class="energy-card fade-in" style="animation-delay:0.2s">
+    <div class="energy-row" id="energy-rows"></div>
+  </div>
+
+  <!-- AMBIENTES -->
+  <div class="section-label fade-in" style="animation-delay:0.22s">
+    Ambientes
+    <div style="display:flex;gap:0.4rem">
+      <button class="bulk-btn on" onclick="setAll(true)" style="padding:0.3rem 0.7rem;flex:none">
+        <span class="material-symbols-outlined" style="font-size:0.8rem!important">power</span>Ligar tudo
+      </button>
+      <button class="bulk-btn off" onclick="setAll(false)" style="padding:0.3rem 0.7rem;flex:none">
+        <span class="material-symbols-outlined" style="font-size:0.8rem!important">power_off</span>Desligar
+      </button>
+    </div>
+  </div>
+
+  <div id="acc-container" class="fade-in" style="animation-delay:0.25s"></div>
+
+</div>
+
+<!-- ══════ NIGHT MODAL ══════ -->
+<div id="night-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-backdrop" onclick="closeNightModal()"></div>
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div>
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--brand-d);margin-bottom:0.25rem">
+          Automação
+        </div>
+        <div class="modal-title" id="modal-title">Rotina Noturna</div>
+        <div class="modal-sub">Programe ações automáticas para a noite.</div>
+      </div>
+      <button class="modal-close" onclick="closeNightModal()" aria-label="Fechar">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="enable-row">
+      <div>
+        <div class="enable-label">Ativar rotina noturna</div>
+        <div class="enable-sub" id="enable-sub">Rotina desativada</div>
+      </div>
+      <label class="tgl">
+        <input type="checkbox" id="night-enabled" onchange="updateNightSummary()">
+        <span class="tgl-track"></span>
+      </label>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="night-time">Horário</label>
+        <input type="time" id="night-time" class="form-control" value="22:00" onchange="updateNightSummary()">
+      </div>
+      <div class="form-field">
+        <label for="night-action">Ação</label>
+        <select id="night-action" class="form-control" onchange="updateNightSummary()">
+          <option value="off">Desligar tudo</option>
+          <option value="on">Ligar tudo</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-devs-header">
+      <div class="modal-devs-label">Dispositivos</div>
+      <div class="tag-btns">
+        <button class="tag-btn all" onclick="selAll(true)">Todos</button>
+        <button class="tag-btn none" onclick="selAll(false)">Nenhum</button>
+      </div>
+    </div>
+    <div id="night-dev-list"></div>
+
+    <div class="night-summary" id="night-summary">Configure a rotina acima.</div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeNightModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveNight()">Salvar Rotina</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<script>
+/* ═══════════════════════════
+   CONFIG
+═══════════════════════════ */
+const K = {
+  pfx:    'nh-',
+  night:  'nh-night',
+  theme:  'nh-theme',
+};
+
+const DEVICES = [
+  { id:'living-room-light', name:'Luz',           loc:'Sala de Estar', icon:'lightbulb',        ic:'#f59e0b', featured:true,  zone:'indoor',  watt:10 },
+  { id:'bedroom1-lamp',     name:'Lâmpada',        loc:'Quarto 1',      icon:'lightbulb',        ic:'#f59e0b', featured:true,  zone:'indoor',  watt:8  },
+  { id:'bedroom1-bath',     name:'Luz Banheiro',   loc:'Quarto 1',      icon:'light',            ic:'#60a5fa', featured:false, zone:'indoor',  watt:6  },
+  { id:'bedroom2-lamp',     name:'Lâmpada',        loc:'Quarto 2',      icon:'lightbulb',        ic:'#f59e0b', featured:false, zone:'indoor',  watt:8  },
+  { id:'kitchen-light',     name:'Luz Cozinha',    loc:'Cozinha',       icon:'lightbulb',        ic:'#f87171', featured:false, zone:'indoor',  watt:12 },
+  { id:'balcony-light',     name:'Luz Varanda',    loc:'Varanda',       icon:'lightbulb_circle', ic:'#4ade80', featured:false, zone:'outdoor', watt:9  },
+  { id:'garden-irrigation', name:'Irrigação',      loc:'Área Externa',  icon:'water_drop',       ic:'#34d399', featured:true,  zone:'outdoor', watt:40 },
+  { id:'exterior-lights',   name:'Luzes Externas', loc:'Área Externa',  icon:'outdoor_garden',   ic:'#fbbf24', featured:false, zone:'outdoor', watt:18 },
+];
+const DMAP = new Map(DEVICES.map(d => [d.id, d]));
+
+const ZONES = [
+  { key:'indoor',  label:'Ambientes Internos',  icon:'sensor_door',  color:'var(--ink)',    rooms:['Sala de Estar','Quarto 1','Quarto 2','Cozinha'], emoji:{'Sala de Estar':'🛋️','Quarto 1':'🛏️','Quarto 2':'🛏️','Cozinha':'🍳'} },
+  { key:'outdoor', label:'Ambientes Externos',  icon:'park',         color:'var(--brand-d)',rooms:['Varanda','Área Externa'],                          emoji:{'Varanda':'🌿','Área Externa':'🌱'} },
+];
+
+/* ═══════════════════════════
+   STATE
+═══════════════════════════ */
+function getOn(id)      { return localStorage.getItem(K.pfx+id) === 'true'; }
+function setOn(id, val) { localStorage.setItem(K.pfx+id, String(val)); }
+
+function getNight() {
+  try { return JSON.parse(localStorage.getItem(K.night)) || {}; } catch(e){ return {}; }
+}
+function setNight(obj) { localStorage.setItem(K.night, JSON.stringify(obj)); }
+
+/* ═══════════════════════════
+   THEME
+═══════════════════════════ */
+(function initTheme() {
+  const t = localStorage.getItem(K.theme) || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem(K.theme, next);
+  document.getElementById('theme-icon').textContent = next === 'dark' ? 'light_mode' : 'dark_mode';
+}
+
+/* ═══════════════════════════
+   ENERGY BARS
+═══════════════════════════ */
+const MAX_WATT = DEVICES.reduce((s,d) => s+d.watt, 0);
+
+function renderEnergyBars() {
+  const container = document.getElementById('energy-rows');
+  // group by zone
+  const groups = [
+    { label:'Iluminação interna', ids: DEVICES.filter(d=>d.zone==='indoor').map(d=>d.id), cls:'' },
+    { label:'Área externa',       ids: DEVICES.filter(d=>d.zone==='outdoor').map(d=>d.id), cls:'cool' },
+  ];
+  container.innerHTML = groups.map(g => {
+    const totalW = g.ids.reduce((s,id)=>s + (DMAP.get(id)?.watt||0), 0);
+    const onW    = g.ids.filter(id=>getOn(id)).reduce((s,id)=>s + (DMAP.get(id)?.watt||0), 0);
+    const pct    = totalW > 0 ? Math.round(onW/totalW*100) : 0;
+    return `<div class="energy-item">
+      <div class="energy-meta">
+        <span class="energy-name">${g.label}</span>
+        <span class="energy-val">${onW}W / ${totalW}W</span>
+      </div>
+      <div class="energy-track">
+        <div class="energy-fill ${g.cls}" data-grp="${g.label}" style="width:${pct}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const totalOn = DEVICES.filter(d=>getOn(d.id)).reduce((s,d)=>s+d.watt,0);
+  document.getElementById('energy-label').textContent = `${totalOn}W ativos`;
+}
+
+function updateEnergyBars() {
+  const groups = [
+    { label:'Iluminação interna', ids: DEVICES.filter(d=>d.zone==='indoor').map(d=>d.id), cls:'' },
+    { label:'Área externa',       ids: DEVICES.filter(d=>d.zone==='outdoor').map(d=>d.id), cls:'cool' },
+  ];
+  groups.forEach(g => {
+    const totalW = g.ids.reduce((s,id)=>s + (DMAP.get(id)?.watt||0), 0);
+    const onW    = g.ids.filter(id=>getOn(id)).reduce((s,id)=>s + (DMAP.get(id)?.watt||0), 0);
+    const pct    = totalW > 0 ? Math.round(onW/totalW*100) : 0;
+    const fill   = document.querySelector(`.energy-fill[data-grp="${g.label}"]`);
+    if (fill) fill.style.width = pct + '%';
+    const metaW = fill?.closest('.energy-item')?.querySelector('.energy-val');
+    if (metaW) metaW.textContent = `${onW}W / ${totalW}W`;
+  });
+  const totalOn = DEVICES.filter(d=>getOn(d.id)).reduce((s,d)=>s+d.watt,0);
+  document.getElementById('energy-label').textContent = `${totalOn}W ativos`;
+}
+
+/* ═══════════════════════════
+   QUICK ACTIONS
+═══════════════════════════ */
+function renderQuick() {
+  const c = document.getElementById('quick-grid');
+  c.innerHTML = '';
+  const featured = DEVICES.filter(d => d.featured);
+  featured.forEach((d, i) => {
+    const on = getOn(d.id);
+    const card = document.createElement('div');
+    card.className = 'quick-card' + (on ? ' is-on' : '');
+    card.dataset.id = d.id;
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `${d.name} — ${d.loc}: ${on?'ligada':'desligada'}`);
+    card.style.cssText = `animation:fadeUp 0.4s ease forwards;animation-delay:${0.1+i*0.05}s;opacity:0`;
+    card.innerHTML = `
+      <div class="q-toggle">
+        <label class="tgl" onclick="event.stopPropagation()">
+          <input type="checkbox" data-dev="${d.id}" ${on?'checked':''} onchange="syncToggle(this)" aria-label="Toggle ${d.name}">
+          <span class="tgl-track"></span>
+        </label>
+      </div>
+      <div class="q-icon"><span class="material-symbols-outlined${on?' fill-icon':''}" style="color:${d.ic}">${d.icon}</span></div>
+      <div class="q-loc">${d.loc}</div>
+      <div class="q-name">${d.name}</div>
+      <div class="q-state${on?' on':''}"><span class="q-state-dot"></span>${on?'Ligada':'Desligada'}</div>
+    `;
+    card.addEventListener('click', () => toggleQuick(card));
+    card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleQuick(card);} });
+    c.appendChild(card);
+  });
+}
+
+function toggleQuick(card) {
+  const id = card.dataset.id;
+  const next = !getOn(id);
+  applyDevice(id, next);
+  updateQuickCard(card, next);
+  updateStats(); updateEnergyBars(); sendSnap();
+  const d = DMAP.get(id);
+  toast(next ? `${d.name} ligada` : `${d.name} desligada`, next);
+}
+
+function updateQuickCard(card, on) {
+  card.classList.toggle('is-on', on);
+  const ico = card.querySelector('.q-icon .material-symbols-outlined');
+  if (ico) { ico.classList.toggle('fill-icon', on); }
+  const st = card.querySelector('.q-state');
+  if (st) { st.textContent=''; const dot=document.createElement('span'); dot.className='q-state-dot'; st.appendChild(dot); st.appendChild(document.createTextNode(on?'Ligada':'Desligada')); st.className='q-state'+(on?' on':''); }
+  const cb = card.querySelector('input');
+  if (cb) cb.checked = on;
+}
+
+function syncQuickUi(id, on) {
+  const card = document.querySelector(`.quick-card[data-id="${id}"]`);
+  if (card) updateQuickCard(card, on);
+}
+
+/* ═══════════════════════════
+   ACCORDION
+═══════════════════════════ */
+function renderAccordion() {
+  const c = document.getElementById('acc-container');
+  c.innerHTML = '';
+  ZONES.forEach((z, zi) => {
+    const zDevices = DEVICES.filter(d => d.zone === z.key);
+    const onCount  = zDevices.filter(d => getOn(d.id)).length;
+    const isOpen   = zi === 0;
+
+    const card = document.createElement('div');
+    card.className = 'acc-card' + (isOpen ? ' open' : '');
+    card.id = `acc-${z.key}`;
+
+    // group devices by room
+    const rooms = [...new Set(zDevices.map(d => d.loc))];
+
+    card.innerHTML = `
+      <button class="acc-trigger" onclick="toggleAcc('${z.key}')" aria-expanded="${isOpen}" aria-controls="acc-body-${z.key}">
+        <div class="acc-icon-wrap">
+          <span class="material-symbols-outlined" style="color:${z.color}">${z.icon}</span>
+        </div>
+        <span class="acc-title">${z.label}</span>
+        <span class="acc-badge" id="acc-badge-${z.key}">${onCount}/${zDevices.length}</span>
+        <span class="material-symbols-outlined acc-chev">expand_more</span>
+      </button>
+      <div class="acc-body${isOpen?' open':''}" id="acc-body-${z.key}">
+        ${rooms.map(room => {
+          const rDevices = zDevices.filter(d => d.loc === room);
+          return `
+          <div class="room-group">
+            <div class="room-label">${z.emoji[room]||''} ${room}</div>
+            <div class="devices-list">
+              ${rDevices.map(d => {
+                const on = getOn(d.id);
+                return `
+                <div class="device-row${on?' is-on':''}" data-id="${d.id}" onclick="toggleRow(this)" role="button" tabindex="0" aria-label="${d.name}: ${on?'ligada':'desligada'}">
+                  <div class="dev-icon">
+                    <span class="material-symbols-outlined${on?' fill-icon':''}" style="color:${d.ic}">${d.icon}</span>
+                  </div>
+                  <div class="dev-info">
+                    <div class="dev-name">${d.name}</div>
+                    <div class="dev-status">${on?'Ligada':'Desligada'}</div>
+                  </div>
+                  <label class="tgl" onclick="event.stopPropagation()">
+                    <input type="checkbox" data-dev="${d.id}" ${on?'checked':''} onchange="syncToggle(this)" aria-label="Toggle ${d.name}">
+                    <span class="tgl-track"></span>
+                  </label>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    `;
+    c.appendChild(card);
+  });
+
+  // keyboard on device rows
+  document.querySelectorAll('.device-row').forEach(row => {
+    row.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleRow(row);} });
+  });
+}
+
+function toggleAcc(key) {
+  const card = document.getElementById(`acc-${key}`);
+  const body = document.getElementById(`acc-body-${key}`);
+  const btn  = card.querySelector('.acc-trigger');
+  const open = card.classList.toggle('open');
+  body.classList.toggle('open', open);
+  btn.setAttribute('aria-expanded', open);
+}
+
+/* ═══════════════════════════
+   DEVICE TOGGLE
+═══════════════════════════ */
+function applyDevice(id, on) {
+  setOn(id, on);
+  // update row
+  const row = document.querySelector(`.device-row[data-id="${id}"]`);
+  if (row) {
+    row.classList.toggle('is-on', on);
+    const ico  = row.querySelector('.dev-icon .material-symbols-outlined');
+    if (ico) ico.classList.toggle('fill-icon', on);
+    const st   = row.querySelector('.dev-status');
+    if (st) st.textContent = on ? 'Ligada' : 'Desligada';
+    const cb   = row.querySelector('input[type=checkbox]');
+    if (cb) cb.checked = on;
+  }
+  syncQuickUi(id, on);
+  updateZoneBadge(id);
+}
+
+function toggleRow(row) {
+  const id   = row.dataset.id;
+  const next = !getOn(id);
+  applyDevice(id, next);
+  updateStats(); updateEnergyBars(); sendSnap();
+  const d = DMAP.get(id);
+  toast(next ? `${d.name} ligada` : `${d.name} desligada`, next);
+}
+
+function syncToggle(cb) {
+  const id   = cb.dataset.dev;
+  const next = cb.checked;
+  applyDevice(id, next);
+  updateStats(); updateEnergyBars(); sendSnap();
+  const d = DMAP.get(id);
+  toast(next ? `${d.name} ligada` : `${d.name} desligada`, next);
+}
+
+function setAll(state) {
+  DEVICES.forEach(d => applyDevice(d.id, state));
+  updateStats(); updateEnergyBars(); sendSnap();
+  toast(state ? 'Todos os dispositivos ligados' : 'Todos desligados', state);
+}
+
+/* ═══════════════════════════
+   STATS & BADGES
+═══════════════════════════ */
+function updateStats() {
+  const on = DEVICES.filter(d => getOn(d.id)).length;
+  document.getElementById('stat-on').textContent = on;
+}
+function updateZoneBadge(id) {
+  const d = DMAP.get(id);
+  if (!d) return;
+  const zDev = DEVICES.filter(x => x.zone === d.zone);
+  const on   = zDev.filter(x => getOn(x.id)).length;
+  const badge = document.getElementById(`acc-badge-${d.zone}`);
+  if (badge) badge.textContent = `${on}/${zDev.length}`;
+}
+function updateAllBadges() {
+  ZONES.forEach(z => {
+    const zDev = DEVICES.filter(d => d.zone === z.key);
+    const on   = zDev.filter(d => getOn(d.id)).length;
+    const badge = document.getElementById(`acc-badge-${z.key}`);
+    if (badge) badge.textContent = `${on}/${zDev.length}`;
+  });
+}
+function updateNightIndicator() {
+  const n = getNight();
+  const active = !!n.enabled;
+  document.getElementById('night-indicator').classList.toggle('hidden', !active);
+  document.getElementById('night-stat').textContent = active ? '🌙✓' : '🌙';
+}
+
+/* ═══════════════════════════
+   NIGHT MODAL
+═══════════════════════════ */
+function openNightModal() {
+  const n = getNight();
+  document.getElementById('night-enabled').checked = !!n.enabled;
+  document.getElementById('night-time').value        = n.time   || '22:00';
+  document.getElementById('night-action').value      = n.action || 'off';
+  buildNightList(n.rooms || ['living-room-light','bedroom1-lamp']);
+  updateNightSummary();
+  const m = document.getElementById('night-modal');
+  m.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  m.querySelector('.modal-close').focus();
+}
+function closeNightModal() {
+  document.getElementById('night-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function buildNightList(saved) {
+  const c = document.getElementById('night-dev-list');
+  c.innerHTML = '';
+  DEVICES.forEach(d => {
+    const checked = saved.includes(d.id);
+    const row = document.createElement('label');
+    row.className = 'night-dev-row';
+    row.innerHTML = `
+      <input type="checkbox" class="night-cb" value="${d.id}" ${checked?'checked':''} onchange="updateNightSummary()" aria-label="${d.name} — ${d.loc}">
+      <span class="material-symbols-outlined" style="font-size:1rem!important;color:${d.ic}">${d.icon}</span>
+      <div style="flex:1;min-width:0">
+        <div class="night-dev-name">${d.name}</div>
+        <div class="night-dev-loc">${d.loc}</div>
+      </div>
+      <span class="night-zone-tag">${d.zone==='indoor'?'Interno':'Externo'}</span>
+    `;
+    c.appendChild(row);
+  });
+}
+function selAll(v) {
+  document.querySelectorAll('.night-cb').forEach(cb => cb.checked = v);
+  updateNightSummary();
+}
+function getSelRooms() {
+  return Array.from(document.querySelectorAll('.night-cb:checked')).map(cb => cb.value);
+}
+function updateNightSummary() {
+  const en     = document.getElementById('night-enabled').checked;
+  const time   = document.getElementById('night-time').value || '22:00';
+  const action = document.getElementById('night-action').value;
+  const rooms  = getSelRooms();
+  document.getElementById('enable-sub').textContent = en ? '🟢 Ativa' : 'Desativada';
+  const s = document.getElementById('night-summary');
+  if (!en)         { s.textContent = 'Ative a rotina para configurar automações.'; return; }
+  if (!rooms.length){ s.textContent = '⚠️ Selecione ao menos um dispositivo.'; return; }
+  const act = action === 'off' ? 'desligar' : 'ligar';
+  const names = rooms.map(id => { const d=DMAP.get(id); return d?`${d.name} (${d.loc})`:id; }).join(', ');
+  s.textContent = `Às ${time}, a rotina vai ${act}: ${names}.`;
+}
+function saveNight() {
+  const obj = {
+    enabled: document.getElementById('night-enabled').checked,
+    time:    document.getElementById('night-time').value    || '22:00',
+    action:  document.getElementById('night-action').value  || 'off',
+    rooms:   getSelRooms(),
+  };
+  setNight(obj);
+  updateNightIndicator();
+  closeNightModal();
+  toast(obj.enabled ? `Rotina noturna ativa às ${obj.time}` : 'Rotina noturna desativada', obj.enabled);
+}
+
+/* ═══════════════════════════
+   BACKEND SNAP
+═══════════════════════════ */
+function sendSnap() {
+  const snap = {};
+  DEVICES.forEach(d => {
+    if (!snap[d.loc]) snap[d.loc] = {};
+    snap[d.loc][d.name] = getOn(d.id) ? 1 : 0;
+  });
+  snap._rotina = getNight();
+  window.smartHomeState = snap;
+  fetch('http://localhost:3000/casa', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(snap) }).catch(()=>{});
+}
+
+/* ═══════════════════════════
+   TOAST
+═══════════════════════════ */
+function toast(msg, positive = true) {
+  const c  = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<span class="toast-dot" style="background:${positive?'var(--brand)':'#f87171'}"></span>${msg}`;
+  c.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity 0.25s, transform 0.25s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(6px) scale(0.92)';
+    setTimeout(() => el.remove(), 260);
+  }, 2200);
+}
+
+/* ═══════════════════════════
+   KEYBOARD SHORTCUTS
+═══════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.key === 'Escape')     closeNightModal();
+  if (e.key.toLowerCase()==='t') toggleTheme();
+  if (e.key.toLowerCase()==='n') openNightModal();
+});
+
+/* ═══════════════════════════
+   INIT
+═══════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  // set theme icon
+  const t = document.documentElement.getAttribute('data-theme');
+  document.getElementById('theme-icon').textContent = t === 'dark' ? 'light_mode' : 'dark_mode';
+
+  renderQuick();
+  renderEnergyBars();
+  renderAccordion();
+  updateStats();
+  updateAllBadges();
+  updateNightIndicator();
+  sendSnap();
+
+  // hide loader
+  setTimeout(() => {
+    const loader = document.getElementById('loader');
+    loader.classList.add('out');
+    setTimeout(() => loader.remove(), 500);
+    const app = document.getElementById('app');
+    app.style.opacity = '1';
+    app.style.transition = 'opacity 0.4s ease';
+  }, 950);
+});
+</script>
+</body>
+</html>
