@@ -397,7 +397,11 @@
     <li><a href="#diferenciais">Diferenciais</a></li>
   </ul>
   <div class="nav-cta">
-    <a href="{% url 'dashboard' %}" class="btn-primary" role="button" aria-label="Ver sistema">Ver Sistema</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="btn-primary" role="button" aria-label="Abrir painel">Ir para o Painel</a>
+    {% else %}
+      <a href="{% url 'login' %}" class="btn-primary" role="button" aria-label="Entrar na plataforma">Entrar</a>
+    {% endif %}
   </div>
 </nav>
 
