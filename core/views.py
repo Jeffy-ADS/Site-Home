@@ -34,3 +34,11 @@ def custom_404_view(request, exception):
 
 def preview_404_view(request):
     return render(request, '404.html', status=404)
+
+
+def custom_500_view(request):
+    return render(request, '500.html', status=500)
+
+
+def preview_500_view(request):
+    raise RuntimeError('Erro intencional para testar pagina 500')
